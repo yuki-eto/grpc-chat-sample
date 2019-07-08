@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package grpc;
+
+service ChatService {
+    rpc GetToken(GetTokenRequest) returns (GetTokenResult) {}
+    rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResult) {}
+    rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResult) {}
+    rpc LeaveRoom(LeaveRoomRequest) returns (LeaveRoomResult) {}
+    rpc MessageRoom(MessageRoomRequest) returns (MessageRoomResult) {}
+    rpc Stream(StreamRequest) returns (stream StreamResponse) {}
+}
+
+message Room {
+    string id = 1;
+    string name = 2;
+}
+message Player {
+    uint64 id = 1;
+    string name = 2;
+}
+message Chat {
+    string player_name = 1;
+    string text = 2;
+    int64 time = 3;
+}
+
+message GetTokenRequest {
+    string name = 1;
+}
+message GetTokenResult {
+    string token = 1;
+    string access_token = 2;
+}
+
+message RefreshTokenRequest {}
+message RefreshTokenResult {
+    string access_token = 2;
+}
+
+message JoinRoomRequest {
+    string room_id = 1;
+    string name = 2;
+}
+message JoinRoomResult {
+    bool result = 1;
+    Room room = 2;
+    repeated Player players = 3;
+    repeated Chat chats = 4;
+
+}
+
+message LeaveRoomRequest {
+    string room_id = 1;
+}
+message LeaveRoomResult {
+    bool result = 1;
+}
+
+message MessageRoomRequest {
+    string room_id = 1;
+    string text = 2;
+}
+message MessageRoomResult {
+    bool result = 1;
+}
+
+message StreamRequest {
+    string room_id = 1;
+}
+message StreamResponse {
+    enum StreamType {
+        Chat = 0;
+        Joined = 1;
+        Leaved = 2;
+    }
+
+    StreamType type = 1;
+    Chat chat = 2;
+    Player player = 3;
+}
